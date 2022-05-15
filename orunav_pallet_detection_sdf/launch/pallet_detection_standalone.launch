@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_id" default="1" />
+  <arg name="tf_prefix" value="robot$(arg robot_id)"/>
+
+  <node pkg="orunav_pallet_detection_sdf" type="pallet_detector_node" name="pallet_detector_node" output="screen" ns="$(arg tf_prefix)">
+  
+    <!-- Stream Data -->
+    <param name="using_bagfile" value="true"/>
+    <param name="pallet_name" value="full_pallet"/>
+
+    <remap from="pointcloud" to ="sensors/asus_fork/depth/points"/>
+    <remap from="depthmap" to ="sensors/asus_fork/depth/image_raw"/>
+
+    <param name="pallet_sensor_frame_id_prefix" value="/$(arg tf_prefix)/asus_fork_" />
+    <param name="OBB_frame_id" value="/$(arg tf_prefix)/asus_fork_rgb_optical_frame" />
+    
+    <param name="ground_depthmap_dir" value="$(find orunav_pallet_detection_sdf)/data/ground_depth.png"/>
+    <param name="models_dir" value="$(find orunav_pallet_detection_sdf)/data/"/>
+
+    <param name="downsample" value="true"/>
+    <param name="downsample_ratio" value="0.02"/>
+
+    <!-- For pclEuclideanDistanceSegmentation -->
+    <param name="EC_segThresh" value="0.05"/>
+    <param name="maxSegPoints" value="9900000"/>
+    <param name="minSegPoints" value="100"/>
+
+    <!-- For obbDimensionalCheck -->
+    <param name="tolerance_X" value="0.2"/>
+    <param name="tolerance_Y" value="0.2"/>
+    <param name="tolerance_Z" value="0.5"/>
+
+    <!-- Coarse to Fine Registration -->
+    <param name="obbicp_based" value="true"/>
+    <param name="overlap_dst_thresh" value="0.05"/>
+    <param name="overlap_score_thresh" value="0.8"/>
+
+    <!-- Deep Learning -->
+    <param name="deepLearning_based" value="false"/>
+
+    <param name="save_ground_depthmap" value="false"/>
+    <param name="background_thresh" value="0.1"/>
+
+    <param name="visual_model" value="true"/>
+
+  </node>
+
+</launch>
